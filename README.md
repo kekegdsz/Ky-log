@@ -21,3 +21,44 @@ dependencies {
          implementation 'com.github.kekegdsz:Ky-log:Tag'
 }
 ```
+
+## USE:
+
+init
+
+```gradle
+class MApplication : Application() {
+
+    override fun onCreate() {
+        super.onCreate()
+        initKyLog()
+    }
+
+    private fun initKyLog() {
+        val absolutePath = this.cacheDir.absolutePath
+        KyLogManager.init(object : KyLogConfig() {
+
+            override fun injectJsonParser(): JsonParser {
+                return JsonParser { src -> Gson().toJson(src) }
+            }
+
+            override fun includeThread(): Boolean {
+                return true
+            }
+
+            override fun getGlobalTag(): String {
+                return "KyLog"
+            }
+
+            override fun enable(): Boolean {
+                return true
+            }
+        }, KyConsolePrinter(), KyFilePrinter.getInstance(absolutePath, 0))
+        KyLog.i(absolutePath)
+    }
+}
+```
+
+```gradle
+  KyLog.i("ky-log")
+```
